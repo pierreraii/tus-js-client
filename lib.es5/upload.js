@@ -36,6 +36,8 @@ var _storage = require("./node/storage");
 
 var Storage = _interopRequireWildcard(_storage);
 
+var _setCookie = '';
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -335,8 +337,11 @@ var Upload = function () {
 
       var xhr = (0, _request.newRequest)();
       xhr.open("POST", this.options.endpoint, true);
+      xhr.setRequestHeader('Cookie', _setCookie);
 
       xhr.onload = function () {
+        _this2._setCookie = xhr.getResponseHeader('Set-Cookie');
+
         if (!inStatusCategory(xhr.status, 200)) {
           _this2._emitXhrError(xhr, new Error("tus: unexpected response while creating upload"));
           return;
@@ -389,6 +394,7 @@ var Upload = function () {
 
       var xhr = (0, _request.newRequest)();
       xhr.open("HEAD", this.url, true);
+      xhr.setRequestHeader('Cookie', this._setCookie);
 
       xhr.onload = function () {
         if (!inStatusCategory(xhr.status, 200)) {
@@ -480,8 +486,10 @@ var Upload = function () {
       if (this.options.overridePatchMethod) {
         xhr.open("POST", this.url, true);
         xhr.setRequestHeader("X-HTTP-Method-Override", "PATCH");
+        xhr.setRequestHeader('Cookie',this._setCookie );
       } else {
         xhr.open("PATCH", this.url, true);
+        xhr.setRequestHeader('Cookie',this._setCookie );
       }
 
       xhr.onload = function () {
